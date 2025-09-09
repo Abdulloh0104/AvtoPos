@@ -11,21 +11,42 @@ import Admin from "../pages/Admin"
 import Products from "../pages/Products"
 import Users from "../pages/Users"
 import Analytics from "../pages/Analytics"
+import Login from "../pages/Login"
+import ProtectedRoute from "./ProtectedRoute"
+
+const routes = [
+  { path: "/", element: <Home />, index: true },
+  { path: "companies", element: <Companies /> },
+  { path: "users", element: <Users /> },
+  { path: "products", element: <Products /> },
+  { path: "analytics", element: <Analytics /> },
+  { path: "subscriptions", element: <Subscriptions /> },
+  { path: "activity", element: <Activity /> },
+  { path: "settings", element: <Settings /> },
+  { path: "support", element: <Support /> },
+  { path: "admin", element: <Admin /> },
+]
 
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<DashboardLayout />}>
-        <Route index element={<Home />} />
-        <Route path="companies" element={<Companies />} />
-        <Route path="users" element={<Users />} />
-        <Route path="products" element={<Products />} />
-        <Route path="analytics" element={<Analytics />} />
-        <Route path="subscriptions" element={<Subscriptions />} />
-        <Route path="activity" element={<Activity />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="support" element={<Support />} />
-        <Route path="admin" element={<Admin />} />
+      <Route path="/login" element={<Login />} />
+
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout />
+          </ProtectedRoute>
+        }
+      >
+        {routes.map((route) =>
+          route.index ? (
+            <Route key="index" index element={route.element} />
+          ) : (
+            <Route key={route.path} path={route.path} element={route.element} />
+          )
+        )}
       </Route>
     </Routes>
   )

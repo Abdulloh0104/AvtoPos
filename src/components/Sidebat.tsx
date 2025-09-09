@@ -22,7 +22,7 @@ const Sidebar = () => {
         to="/" 
         className="p-4 text-lg font-semibold tracking-tight text-gray-900 hover:text-blue-600 transition-colors"
       >
-        AvtoPOS
+        Okam.uz
       </Link>
 
       <ul className="flex-1 px-2 py-2 space-y-1">
@@ -47,7 +47,7 @@ const Sidebar = () => {
       </ul>
 
       <div className="p-3 text-xs text-gray-500 border-t border-gray-200/60">
-        AvtoPOS 2025
+        okam.uz 2025
       </div>
     </div>
   )
