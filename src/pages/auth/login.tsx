@@ -1,21 +1,40 @@
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { toast } from "sonner"
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { setItem } from "@helpers";
+import { useAuth } from "@hooks";
 
 const Login = () => {
-  const navigate = useNavigate()
-  const [username, setUsername] = useState("")
-  const [password, setPassword] = useState("")
+  const navigate = useNavigate();
+  const [phone_number, setPhone_number] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
-    if (username === "admin" && password === "12345") {
-      localStorage.setItem("token", "token value")
-      toast.success("Tizimga muvaffaqiyatli kirdingiz!")
-      navigate("/")
-    } else {
-      toast.error("❌ Username yoki parol noto‘g‘ri")
-    }
-  }
+  // const handleLogin = () => {
+  //   if (phone_number === "admin" && password === "12345") {
+  //     setItem("token", "token value");
+  //     toast.success("Tizimga muvaffaqiyatli kirdingiz!");
+  //     console.log("Tizimga muvaffaqiyatli kirdingiz!");
+  //     navigate("/");
+  //   } else {
+  //     toast.error("❌ phone_number yoki parol noto‘g‘ri");
+  //   }
+  // };
+ const { mutate} = useAuth();
+ const submit = () => {
+   const payload = { phone_number, password };
+   console.log(1);
+   mutate(
+     { data: payload},
+     {
+       onSuccess : (res: any) => {
+         if (res.status === 200) {
+           setItem("access_token", res.data.access);
+           navigate("/");
+           console.log("/");
+         }
+       },
+     }
+   );
+ };
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-50">
@@ -28,17 +47,17 @@ const Login = () => {
         <div className="space-y-4">
           <div>
             <label
-              htmlFor="username"
+              htmlFor="phone_number"
               className="block text-sm font-medium text-gray-700"
             >
-              Username
+              Phone number
             </label>
             <input
-              id="username"
+              id="phone_number"
               type="text"
-              placeholder="admin"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              placeholder="123456"
+              value={phone_number}
+              onChange={(e) => setPhone_number(e.target.value)}
               className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm 
                          text-gray-900 placeholder-gray-400
                          focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400 outline-none transition"
@@ -55,7 +74,7 @@ const Login = () => {
             <input
               id="password"
               type="password"
-              placeholder="12345"
+              placeholder="admin"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="mt-1 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm 
@@ -65,7 +84,11 @@ const Login = () => {
           </div>
 
           <button
-            onClick={handleLogin}
+            // onClick={handleLogin}
+            // type="primary"
+            onClick={submit}
+            // loading={isPending}
+            // htmlType="submit"
             className="w-full rounded-md bg-indigo-600 text-white py-2 text-sm font-medium 
                        hover:bg-indigo-700 transition-colors shadow-sm focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1"
           >
@@ -74,7 +97,7 @@ const Login = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

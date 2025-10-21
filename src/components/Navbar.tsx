@@ -20,7 +20,7 @@ const Navbar = () => {
 
         <div className="flex items-center gap-3">
           <img
-            src="https://i.pravatar.cc/40"
+            src="/images/Ablue.png"
             alt="avatar"
             className="w-9 h-9 rounded-full border border-gray-200"
           />
