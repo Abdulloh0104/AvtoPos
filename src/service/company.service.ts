@@ -1,11 +1,6 @@
 import { apiConfig } from "@api/config";
 import { ApiUrls } from "../api/api-urls";
 import type { Company } from "@types";
-// import type {
-//   CompanyStudentCreateType,
-//   CompanyTeacherCreateType,
-//   ParamsType,
-// } from "@types";
 
 export const companyService = {
   async getCompanyById(id: number): Promise<any> {
