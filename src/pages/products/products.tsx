@@ -85,7 +85,7 @@ const Products = () => {
         />
       )}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Rooms</h2>
+        <h2 className="text-xl font-semibold">Mahsulotlar</h2>
         <Button type="primary" onClick={() => setOpen(true)}>
           + Add Product
         </Button>

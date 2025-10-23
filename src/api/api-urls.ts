@@ -17,4 +17,8 @@ export class ApiUrls {
 
   // WAREHOUSES
   public static WAREHOUSES: string = this.ADMIN + "/warehouses/";
+
+  // STATISTICS
+  public static STATISTICS: string = this.ADMIN + "/statistics/";
+  public static TOP_SALES: string = this.ADMIN + "/statistics/top-sales/";
 }

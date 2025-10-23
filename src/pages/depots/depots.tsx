@@ -74,7 +74,7 @@ const Rooms = () => {
     <>
       {open && <DepotModal open={open} toggle={toggle} update={update} />}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Warehouses</h2>
+        <h2 className="text-xl font-semibold">Omborlar</h2>
         <Button type="primary" onClick={() => setOpen(true)}>
           + Add Depot
         </Button>

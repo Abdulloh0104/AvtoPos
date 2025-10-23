@@ -6,3 +6,4 @@ export * from "./useUser";
 export * from "./useAdmin";
 export * from "./useCompany";
 export * from "./useDepot";
+export * from "./useStatistic";
