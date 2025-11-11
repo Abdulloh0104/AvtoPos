@@ -10,7 +10,6 @@ interface DepotProps extends ModalProps {
 }
 
 const DepotModal = ({ open, toggle, update }: DepotProps) => {
-  console.log("update", update);
   const { useDepotCreate, useDepotUpdate } = useDepot(); // {page:1,limit:11}
   const { users } = useUser();
   const { data: companies } = useCompany();

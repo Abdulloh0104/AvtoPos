@@ -1,6 +1,8 @@
 export class ApiUrls {
   // AUTH
-  public static AUTH: string = "/users/login/";
+  public static LOGIN: string = "/users/login/";
+  public static SEND_OTP: string = "/users/send-otp/";
+  public static VERIFY_OTP: string = "/users/verify-otp/";
 
   // ADMIN
   public static ADMIN: string = "/admin";

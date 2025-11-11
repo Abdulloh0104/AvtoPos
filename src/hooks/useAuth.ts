@@ -1,15 +1,23 @@
-import { useMutation} from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { authService } from "@service";
-import { type SignIn } from "@types";
+import { type SendOTP, type VerifyOTP } from "@types";
 
-export const useAuth=()=>{
+export const useAuth = () => {
+  //Mutations
+  const useSendOtp = () => {
     return useMutation({
-        mutationFn:async({data}:{data:SignIn})=>authService.signIn(data)
-    })
-}
-
-export const useAuthLogOut = () => {  
+      mutationFn: async ({ data }: { data: SendOTP }) =>
+        authService.sendOTP(data),
+    });
+  };
+  const useVerifyOtp = () => {
     return useMutation({
-        mutationFn:async({role}:{role:string})=>authService.signOut(role)
-    })
-}
+      mutationFn: async ({ data }: { data: VerifyOTP }) =>
+        authService.verifyOTP(data),
+    });
+  };
+  return {
+    useSendOtp,
+    useVerifyOtp,
+  };
+};

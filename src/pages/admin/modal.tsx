@@ -17,7 +17,6 @@ interface AdminProps extends ModalProps {
 }
 
 const AdminModel = ({ open, toggle, update }: AdminProps) => {
-  console.log("update", update);
   const { useUserUpdate, useUserCreate } = useUser(); // {page:1,limit:11}
   const { mutate: createFn } = useUserCreate();
   const { mutate: updateFn } = useUserUpdate();
@@ -60,7 +59,6 @@ const AdminModel = ({ open, toggle, update }: AdminProps) => {
           },
         }
       );
-      console.log("up", update);
     } else {
       createFn(
         { ...data },

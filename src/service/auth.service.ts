@@ -1,16 +1,25 @@
 import { apiConfig } from "@api/config";
 import { ApiUrls } from "@api/api-urls";
-import { type SignIn } from "@types";
+import { type SendOTP, type SignIn, type VerifyOTP } from "@types";
 
 export const authService = {
-  async signIn(model: SignIn):Promise<any> {
+  async signIn(model: SignIn): Promise<any> {
     console.log(model);
-    const res = await apiConfig().postRequest(ApiUrls.AUTH, model);
-    console.log("res",res);
+    const res = await apiConfig().postRequest(ApiUrls.LOGIN, model);
+    console.log("res", res);
     return res;
   },
-  async signOut(role:string):Promise<any> {
-    const res = await apiConfig().getRequest(`/${role}-auth${ApiUrls.AUTH}-out`);
+  async sendOTP(model: SendOTP): Promise<any> {
+    console.log("sendOTP", model);
+    const res = await apiConfig().postRequest(ApiUrls.SEND_OTP, model);
+    console.log("send-otp res", res);
+    return res;
+  },
+
+  async verifyOTP(model: VerifyOTP): Promise<any> {
+    console.log("verify-otp", model);
+    const res = await apiConfig().postRequest(ApiUrls.VERIFY_OTP, model);
+    console.log("verify-otp res", res);
     return res;
   },
 };

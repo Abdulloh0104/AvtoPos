@@ -21,7 +21,7 @@ export function apiConfig() {
       Notification("error", err?.message);
     }
   }
-
+  
   async function putRequest(url: string, body: object = {}) {
     try {
       const res = await axiosInstance.put(url, body);
@@ -31,11 +31,12 @@ export function apiConfig() {
       Notification("error", err?.message);
     }
   }
-
+  
   async function patchRequest(url: string, body: object = {}) {
     try {
       const res = await axiosInstance.patch(url, body);
       Notification("success", res?.request?.statusText);
+      console.log("res",res);
       return res;
     } catch (err: any) {
       console.log(err);

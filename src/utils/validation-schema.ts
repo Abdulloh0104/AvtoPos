@@ -6,6 +6,38 @@ export const companyFormSchema = yup.object().shape({
   owner: yup.number().required("Owner is required"),
 });
 
+// SENDOTP FORM
+export const sendOTPFormSchema = yup.object().shape({
+  phone_number: yup.string().required("Phone number is required"),
+});
+
+// VERIFYOTP FORM
+export const verifyOTPFormSchema = yup.object().shape({
+  phone_number: yup.string().required("Phone number is required"),
+  otp_code: yup.string().required("Code is required"),
+});
+
+// utils/phoneUtils.ts
+
+// +998 (90) 123-45-67 -> +998901234567
+export const cleanPhoneNumber = (value: string): string => {
+  if (!value) return "";
+  return `+${value.replace(/\D/g, "")}`;
+};
+
+// +998901234567 -> +998 (90) 123-45-67
+export const formatPhoneNumber = (value: string): string => {
+  if (!value) return "";
+  const digits = value.replace(/\D/g, "");
+
+  if (digits.length < 12) return value; // noto‘liq raqam kiritilsa
+
+  return `+${digits.slice(0, 3)} (${digits.slice(3, 5)}) ${digits.slice(
+    5,
+    8
+  )}-${digits.slice(8, 10)}-${digits.slice(10, 12)}`;
+};
+
 // GROUP FORM
 export const groupFormSchema = yup.object().shape({
   name: yup.string().min(2).required("Name is required"),

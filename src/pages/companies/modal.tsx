@@ -10,7 +10,6 @@ interface CompanyProps extends ModalProps {
 }
 
 const CompanyModal = ({ open, toggle, update }: CompanyProps) => {
-  console.log("update", update);
   const { useCompanyCreate, useCompanyUpdate } = useCompany(); // {page:1,limit:11}
   const {users} = useUser()
   const { mutate: createFn } = useCompanyCreate();

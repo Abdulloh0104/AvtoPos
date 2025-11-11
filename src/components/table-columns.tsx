@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { Tag, Tooltip } from "antd";
 import type { Company, Depot, Product, User } from "@types";
 import type { TableProps } from "antd";
+import { formatPhoneNumber } from "../utils";
 
 // COMPANY COLUMNS
 export const CompanyColums: TableProps<Company>["columns"] = [
@@ -82,6 +83,7 @@ export const UserColumns: TableProps<User>["columns"] = [
     title: "Phone number",
     dataIndex: "phone_number",
     key: "phone_number",
+    render: (value: string) => formatPhoneNumber(value),
   },
   {
     title: "Active",

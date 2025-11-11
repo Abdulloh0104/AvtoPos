@@ -10,14 +10,13 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import type { ModalProps, User } from "@types";
 import { useUser } from "@hooks";
-import { userFormSchema } from "@utils";
+import { cleanPhoneNumber, formatPhoneNumber, userFormSchema } from "@utils";
 import { MaskedInput } from "antd-mask-input";
 interface UserProps extends ModalProps {
   update: User | null;
 }
 
 const UserModel = ({ open, toggle, update }: UserProps) => {
-  console.log("update", update);
   const { useUserUpdate, useUserCreate } = useUser(); // {page:1,limit:11}
   const { mutate: createFn } = useUserCreate();
   const { mutate: updateFn } = useUserUpdate();
@@ -43,36 +42,52 @@ const UserModel = ({ open, toggle, update }: UserProps) => {
       setValue("first_name", update.first_name ? update.first_name : "");
       setValue("last_name", update.last_name ? update.last_name : "");
       setValue("email", update.email ? update.email : "");
-      setValue("phone_number", update.phone_number ? update.phone_number : "");
+      setValue(
+        "phone_number",
+        update.phone_number ? formatPhoneNumber(update.phone_number) : ""
+      );
       setValue("is_active", update.is_active);
       setValue("is_staff", update.is_staff);
       setValue("is_admin", update.is_admin);
     }
   }, [update, setValue]);
+  // const onSubmit = (data: any) => {
+  //   if (update?.id) {
+  //     updateFn(
+  //       { id: update.id, data },
+  //       {
+  //         onSuccess: () => {
+  //           // console.log("Update User", { ...data, id: update.id });
+  //           toggle();
+  //         },
+  //       }
+  //     );
+  //   } else {
+  //     createFn(
+  //       { ...data },
+  //       {
+  //         onSuccess: () => {
+  //           console.log("Create User", data);
+  //           toggle();
+  //         },
+  //       }
+  //     );
+  //   }
+  // };
+  
   const onSubmit = (data: any) => {
+    const cleanedData = {
+      ...data,
+      phone_number: cleanPhoneNumber(data.phone_number), // ✅ backend uchun +998901234567 format
+    };
+
     if (update?.id) {
-      updateFn(
-        { id: update.id, data },
-        {
-          onSuccess: () => {
-            // console.log("Update User", { ...data, id: update.id });
-            toggle();
-          },
-        }
-      );
-      console.log("up", update);
+      updateFn({ id: update.id, data: cleanedData }, { onSuccess: toggle });
     } else {
-      createFn(
-        { ...data },
-        {
-          onSuccess: () => {
-            console.log("Create User", data);
-            toggle();
-          },
-        }
-      );
+      createFn(cleanedData, { onSuccess: toggle });
     }
   };
+
   return (
     <Modal
       title="User Modal"
@@ -155,6 +170,8 @@ const UserModel = ({ open, toggle, update }: UserProps) => {
               <MaskedInput
                 {...field}
                 mask="+998 (00) 000-00-00"
+                placeholder="+998 (__) ___-__-__"
+                status={errors.phone_number ? "error" : ""}
                 value={update ? update.phone_number : ""}
               />
             )}
