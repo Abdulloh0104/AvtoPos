@@ -143,21 +143,29 @@
 // };
 
 // export default Login;
-import { useState } from "react";
+"use client";
+
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, Typography, Space, type InputRef } from "antd";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { MaskedInput } from "antd-mask-input";
+import { motion } from "framer-motion";
 import { setItem } from "@helpers";
 import { useAuth } from "@hooks";
-import { cleanPhoneNumber, sendOTPFormSchema, verifyOTPFormSchema } from "@utils"; // your validation file
+import {
+  cleanPhoneNumber,
+  sendOTPFormSchema,
+  verifyOTPFormSchema,
+} from "@utils";
 import type { SendOTP, VerifyOTP } from "@types";
 
-
 const Login = () => {
+
   const navigate = useNavigate();
   const [step, setStep] = useState<0 | 1>(0);
+  const [sentPhone, setSentPhone] = useState<string>("");
 
   const { useSendOtp, useVerifyOtp } = useAuth();
   const { mutate: sendOTP, isPending: isSending } = useSendOtp();
@@ -177,32 +185,48 @@ const Login = () => {
   const {
     control: verifyControl,
     handleSubmit: handleVerifySubmit,
+    setValue,
     formState: { errors: verifyErrors },
   } = useForm<VerifyOTP>({
     resolver: yupResolver(verifyOTPFormSchema),
-    defaultValues: { phone_number: "", otp_code: undefined },
+    defaultValues: { phone_number: "", otp_code: "" },
   });
+
+  const otpRefs = useRef<(InputRef | null)[]>([]);
+  const [otp, setOtp] = useState(Array(6).fill(""));
 
   // Send OTP handler
   const onSendOtp = (data: SendOTP) => {
-    const cleanedNumber = cleanPhoneNumber(data.phone_number);
+    const cleaned = cleanPhoneNumber(data.phone_number);
     sendOTP(
-      { data: { phone_number: cleanedNumber } },
+      { data: { phone_number: cleaned } },
       {
         onSuccess: (res: any) => {
           if (res.status === 200) {
             setStep(1);
+            setSentPhone(data.phone_number);
+            setValue("phone_number", cleaned);
           }
         },
       }
     );
   };
 
+  // OTP input logic
+  const handleOtpChange = (val: string, idx: number) => {
+    if (!/^[0-9]?$/.test(val)) return;
+    const newOtp = [...otp];
+    newOtp[idx] = val;
+    setOtp(newOtp);
+    setValue("otp_code", newOtp.join(""));
+    if (val && idx < 5) otpRefs.current[idx + 1]?.focus();
+    if (!val && idx > 0) otpRefs.current[idx - 1]?.focus();
+  };
+
   // Verify OTP handler
-  const onVerifyOtp = (data: VerifyOTP ) => {
-    const cleanedNumber = cleanPhoneNumber(data.phone_number); 
+  const onVerifyOtp = (data: VerifyOTP) => {
     verifyOTP(
-      { data: { phone_number: cleanedNumber, otp_code: data.otp_code } },
+      { data: { phone_number: data.phone_number, otp_code: data.otp_code } },
       {
         onSuccess: (res: any) => {
           if (res.status === 200) {
@@ -216,17 +240,22 @@ const Login = () => {
 
   return (
     <div className="flex h-screen items-center justify-center bg-gray-50">
-      <div className="w-[380px] rounded-lg bg-white border border-gray-200 shadow-md p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 25 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-[380px] rounded-xl bg-white border border-gray-200 shadow-lg p-8"
+      >
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-gray-900">Login</h1>
           <p className="mt-1 text-sm text-gray-500">Tizimga kirish</p>
         </div>
 
         {step === 0 ? (
-          // STEP 1: SEND OTP
+          // 🟩 STEP 1: SEND OTP
           <Form layout="vertical" onFinish={handleSendSubmit(onSendOtp)}>
             <Form.Item
-              label="Phone number"
+              label="Telefon raqam"
               validateStatus={sendErrors.phone_number ? "error" : ""}
               help={sendErrors.phone_number?.message}
             >
@@ -256,49 +285,59 @@ const Login = () => {
             </Form.Item>
           </Form>
         ) : (
-          // STEP 2: VERIFY OTP
+          // 🟦 STEP 2: VERIFY OTP
           <Form layout="vertical" onFinish={handleVerifySubmit(onVerifyOtp)}>
-            <div className="mb-2 text-sm text-gray-700">
-              <b>{}</b> raqamiga kod yuborildi. Iltimos, tekshirib kiriting.
-            </div>
-
-            <Form.Item
-              label="Phone number"
-              validateStatus={verifyErrors.phone_number ? "error" : ""}
-              help={verifyErrors.phone_number?.message}
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="mb-4 text-center text-gray-700"
             >
-              <Controller
-                name="phone_number"
-                control={verifyControl}
-                render={({ field }) => (
-                  <MaskedInput
-                    {...field}
-                    mask="+998 (00) 000-00-00"
-                    placeholder="+998 (90) 123-45-67"
-                    status={verifyErrors.phone_number ? "error" : ""}
-                  />
-                )}
-              />
-            </Form.Item>
+              <Typography.Text>
+                📱 <b>{sentPhone}</b> raqamiga kod yuborildi.
+                <br /> Iltimos, tekshirib kiriting.
+              </Typography.Text>
+            </motion.div>
 
-            <Form.Item
-              label="Verification Code"
-              validateStatus={verifyErrors.otp_code ? "error" : ""}
-              help={verifyErrors.otp_code?.message}
-            >
-              <Controller
-                name="otp_code"
-                control={verifyControl}
-                render={({ field }) => (
-                  <Input
-                    {...field}
-                    placeholder="123456"
-                    type="number"
-                    status={verifyErrors.otp_code ? "error" : ""}
-                  />
-                )}
-              />
-            </Form.Item>
+            <Controller
+              name="otp_code"
+              control={verifyControl}
+              render={() => (
+                <Space.Compact className="flex justify-center gap-2 mb-4">
+                  {otp.map((digit, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ scale: 0.8 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <Input
+                        key={i}
+                        ref={(el) => {
+                          otpRefs.current[i] = el;
+                        }}
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) => handleOtpChange(e.target.value, i)}
+                        style={{
+                          width: 45,
+                          height: 55,
+                          textAlign: "center",
+                          fontSize: "1.4rem",
+                          borderRadius: 10,
+                          borderColor: "#d9d9d9",
+                        }}
+                      />
+                    </motion.div>
+                  ))}
+                </Space.Compact>
+              )}
+            />
+            {verifyErrors.otp_code && (
+              <p className="text-red-500 text-sm text-center mb-3">
+                {verifyErrors.otp_code.message}
+              </p>
+            )}
 
             <Form.Item>
               <Button
@@ -312,7 +351,7 @@ const Login = () => {
             </Form.Item>
           </Form>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };
