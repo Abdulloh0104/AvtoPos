@@ -1457,7 +1457,7 @@ export default function CompanyManagement() {
                       <span className="text-xs font-medium">Savdo</span>
                     </div>
                     <p className="text-2xl font-bold text-foreground">
-                      ₸{company?.today_sales_sum}
+                      {company?.today_sales_sum} UZS
                     </p>
                   </div>
                 </div>
